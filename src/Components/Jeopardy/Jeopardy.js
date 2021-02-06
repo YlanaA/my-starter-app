@@ -1,16 +1,20 @@
 import React, { Component } from 'react';
 //import our service
 import JeopardyService from "../../jeopardyService";
+import JeopardyDisplay from "../../pages/jeopardy/JeopardyDisplay";
+
+
+
 class Jeopardy extends Component {
   //set our initial state and set up our service as this.client on this component
-  constructor(props){
+  constructor(props) {
     super(props);
     this.client = new JeopardyService();
     this.state = {
       data: {},
       score: 0,
       formData: {
-        answer:"",
+        answer: "",
       }
     }
   }
@@ -24,32 +28,32 @@ class Jeopardy extends Component {
   }
 
   handleChange = (event) => {
-    const formData ={...this.state.formData}
-     console.log(formData)
-     console.log(event.target)
-     console.log(event.target.name)
+    const formData = { ...this.state.formData }
+    console.log(formData)
+    console.log(event.target)
+    console.log(event.target.name)
     formData[event.target.name] = event.target.value
     this.setState({
-        formData
+      formData
     })
-}
+  }
 
-handleSubmit = (event) => {
+  handleSubmit = (event) => {
     event.preventDefault();
     console.log('handle submit')
-    if(this.state.formData.answer === this.state.data.answer) {
+    if (this.state.formData.answer === this.state.data.answer) {
       console.log('match')
-        this.setState( (state, props) => ({
-          score: state.score + state.data.value,
-          formData: {
-            answer: ""
-          }
-        }) )
-      } else {
+      this.setState((state, props) => ({
+        score: state.score + state.data.value,
+        formData: {
+          answer: ""
+        }
+      }))
+    } else {
       console.log('noMatch')
     }
 
-      this.getNewQuestion ();
+    this.getNewQuestion();
   }
 
 
@@ -60,58 +64,22 @@ handleSubmit = (event) => {
   }
   //display the results on the screen
   render() {
-      console.log(this.state.data)
-      if (!this.state.data.id) {
-          return (
-              <div>
-                  Loading
-              </div>
-          )
-      }
+    console.log(this.state.data);
+    let category = this.state.data.category && this.state.data.category.title;
+    return (
+      <JeopardyDisplay
+        question={this.state.data.question}
+        category={category}
+        value={this.state.data.value}
+        score={this.setState.score}
+        userAnswer={this.state.userAnswer}
+        handleChange={this.handleChange}
+        handleSubmit={this.handleSubmit}
+      />
+    )
 
-      return(
-        <div>
-          <div>
-            <label>Question:</label>
-            <br />
-            <p>{this.state.data.question}</p>
-          </div>
-          <div>
-            <label>Category:</label>
-            <p>{this.state.data.category.title}</p>
-          </div>
-          <div>
-            <label>Value:</label>
-            <p>{this.state.data.value}</p>
-          </div>
-          <div>
-            <label>Score:</label>
-            <p>{this.state.score}</p>
-          </div>
-          <form onSubmit={this.handleSubmit}>
-            <div>
-            <label htmlFor="answer">Answer</label>
-            <input
-                  type="text"
-                  name="answer"
-                  value={this.state.formData.answer}
-                  onChange={this.handleChange}
-                  />
-
-            </div>
-            <button>Good Luck!</button>
-          </form>
-          
-        </div>
-    
-
-      
-
-
-
-
-      );
-    
   }
 }
-export default Jeopardy;
+
+
+  export default Jeopardy;
